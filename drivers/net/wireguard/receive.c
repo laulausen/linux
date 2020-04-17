@@ -109,8 +109,8 @@ static void wg_receive_handshake_packet(struct wg_device *wg,
 	bool under_load;
 
 	if (SKB_TYPE_LE32(skb) == cpu_to_le32(MESSAGE_HANDSHAKE_COOKIE)) {
-		net_dbg_skb_ratelimited("%s: Receiving cookie response from %pISpfsc\n",
-					wg->dev->name, skb);
+//		net_dbg_skb_ratelimited("%s: Receiving cookie response from %pISpfsc\n",
+//					wg->dev->name, skb);
 		wg_cookie_message_consume(
 			(struct message_handshake_cookie *)skb->data, wg);
 		return;
@@ -133,8 +133,8 @@ static void wg_receive_handshake_packet(struct wg_device *wg,
 	} else if (under_load && mac_state == VALID_MAC_BUT_NO_COOKIE) {
 		packet_needs_cookie = true;
 	} else {
-		net_dbg_skb_ratelimited("%s: Invalid MAC of handshake, dropping packet from %pISpfsc\n",
-					wg->dev->name, skb);
+//		net_dbg_skb_ratelimited("%s: Invalid MAC of handshake, dropping packet from %pISpfsc\n",
+//					wg->dev->name, skb);
 		return;
 	}
 
@@ -150,14 +150,14 @@ static void wg_receive_handshake_packet(struct wg_device *wg,
 		}
 		peer = wg_noise_handshake_consume_initiation(message, wg);
 		if (unlikely(!peer)) {
-			net_dbg_skb_ratelimited("%s: Invalid handshake initiation from %pISpfsc\n",
-						wg->dev->name, skb);
+//			net_dbg_skb_ratelimited("%s: Invalid handshake initiation from %pISpfsc\n",
+//						wg->dev->name, skb);
 			return;
 		}
 		wg_socket_set_peer_endpoint_from_skb(peer, skb);
-		net_dbg_ratelimited("%s: Receiving handshake initiation from peer %llu (%pISpfsc)\n",
-				    wg->dev->name, peer->internal_id,
-				    &peer->endpoint.addr);
+//		net_dbg_ratelimited("%s: Receiving handshake initiation from peer %llu (%pISpfsc)\n",
+//				    wg->dev->name, peer->internal_id,
+//				    &peer->endpoint.addr);
 		wg_packet_send_handshake_response(peer);
 		break;
 	}
@@ -172,14 +172,14 @@ static void wg_receive_handshake_packet(struct wg_device *wg,
 		}
 		peer = wg_noise_handshake_consume_response(message, wg);
 		if (unlikely(!peer)) {
-			net_dbg_skb_ratelimited("%s: Invalid handshake response from %pISpfsc\n",
-						wg->dev->name, skb);
+//			net_dbg_skb_ratelimited("%s: Invalid handshake response from %pISpfsc\n",
+//						wg->dev->name, skb);
 			return;
 		}
 		wg_socket_set_peer_endpoint_from_skb(peer, skb);
-		net_dbg_ratelimited("%s: Receiving handshake response from peer %llu (%pISpfsc)\n",
-				    wg->dev->name, peer->internal_id,
-				    &peer->endpoint.addr);
+//		net_dbg_ratelimited("%s: Receiving handshake response from peer %llu (%pISpfsc)\n",
+//				    wg->dev->name, peer->internal_id,
+//				    &peer->endpoint.addr);
 		if (wg_noise_handshake_begin_session(&peer->handshake,
 						     &peer->keypairs)) {
 			wg_timers_session_derived(peer);
@@ -363,9 +363,9 @@ static void wg_packet_consume_data_done(struct wg_peer *peer,
 	/* A packet with length 0 is a keepalive packet */
 	if (unlikely(!skb->len)) {
 		update_rx_stats(peer, message_data_len(0));
-		net_dbg_ratelimited("%s: Receiving keepalive packet from peer %llu (%pISpfsc)\n",
-				    dev->name, peer->internal_id,
-				    &peer->endpoint.addr);
+//		net_dbg_ratelimited("%s: Receiving keepalive packet from peer %llu (%pISpfsc)\n",
+//				    dev->name, peer->internal_id,
+//				    &peer->endpoint.addr);
 		goto packet_processed;
 	}
 
@@ -419,30 +419,30 @@ static void wg_packet_consume_data_done(struct wg_peer *peer,
 
 	if (unlikely(napi_gro_receive(&peer->napi, skb) == GRO_DROP)) {
 		++dev->stats.rx_dropped;
-		net_dbg_ratelimited("%s: Failed to give packet to userspace from peer %llu (%pISpfsc)\n",
-				    dev->name, peer->internal_id,
-				    &peer->endpoint.addr);
+//		net_dbg_ratelimited("%s: Failed to give packet to userspace from peer %llu (%pISpfsc)\n",
+//				    dev->name, peer->internal_id,
+//				    &peer->endpoint.addr);
 	} else {
 		update_rx_stats(peer, message_data_len(len_before_trim));
 	}
 	return;
 
 dishonest_packet_peer:
-	net_dbg_skb_ratelimited("%s: Packet has unallowed src IP (%pISc) from peer %llu (%pISpfsc)\n",
-				dev->name, skb, peer->internal_id,
-				&peer->endpoint.addr);
+//	net_dbg_skb_ratelimited("%s: Packet has unallowed src IP (%pISc) from peer %llu (%pISpfsc)\n",
+//				dev->name, skb, peer->internal_id,
+//				&peer->endpoint.addr);
 	++dev->stats.rx_errors;
 	++dev->stats.rx_frame_errors;
 	goto packet_processed;
 dishonest_packet_type:
-	net_dbg_ratelimited("%s: Packet is neither ipv4 nor ipv6 from peer %llu (%pISpfsc)\n",
-			    dev->name, peer->internal_id, &peer->endpoint.addr);
+//	net_dbg_ratelimited("%s: Packet is neither ipv4 nor ipv6 from peer %llu (%pISpfsc)\n",
+//			    dev->name, peer->internal_id, &peer->endpoint.addr);
 	++dev->stats.rx_errors;
 	++dev->stats.rx_frame_errors;
 	goto packet_processed;
 dishonest_packet_size:
-	net_dbg_ratelimited("%s: Packet has incorrect size from peer %llu (%pISpfsc)\n",
-			    dev->name, peer->internal_id, &peer->endpoint.addr);
+//	net_dbg_ratelimited("%s: Packet has incorrect size from peer %llu (%pISpfsc)\n",
+//			    dev->name, peer->internal_id, &peer->endpoint.addr);
 	++dev->stats.rx_errors;
 	++dev->stats.rx_length_errors;
 	goto packet_processed;
@@ -477,10 +477,10 @@ int wg_packet_rx_poll(struct napi_struct *napi, int budget)
 
 		if (unlikely(!counter_validate(&keypair->receiving.counter,
 					       PACKET_CB(skb)->nonce))) {
-			net_dbg_ratelimited("%s: Packet has invalid nonce %llu (max %llu)\n",
-					    peer->device->dev->name,
-					    PACKET_CB(skb)->nonce,
-					    keypair->receiving.counter.receive.counter);
+//			net_dbg_ratelimited("%s: Packet has invalid nonce %llu (max %llu)\n",
+//					    peer->device->dev->name,
+//					    PACKET_CB(skb)->nonce,
+//					    keypair->receiving.counter.receive.counter);
 			goto next;
 		}
 
@@ -569,8 +569,8 @@ void wg_packet_receive(struct wg_device *wg, struct sk_buff *skb)
 		if (skb_queue_len(&wg->incoming_handshakes) >
 			    MAX_QUEUED_INCOMING_HANDSHAKES ||
 		    unlikely(!rng_is_initialized())) {
-			net_dbg_skb_ratelimited("%s: Dropping handshake packet from %pISpfsc\n",
-						wg->dev->name, skb);
+//			net_dbg_skb_ratelimited("%s: Dropping handshake packet from %pISpfsc\n",
+//						wg->dev->name, skb);
 			goto err;
 		}
 		skb_queue_tail(&wg->incoming_handshakes, skb);

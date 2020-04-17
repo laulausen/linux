@@ -73,14 +73,14 @@ static int send4(struct wg_device *wg, struct sk_buff *skb,
 		}
 		if (unlikely(IS_ERR(rt))) {
 			ret = PTR_ERR(rt);
-			net_dbg_ratelimited("%s: No route to %pISpfsc, error %d\n",
-					    wg->dev->name, &endpoint->addr, ret);
+//			net_dbg_ratelimited("%s: No route to %pISpfsc, error %d\n",
+//					    wg->dev->name, &endpoint->addr, ret);
 			goto err;
 		} else if (unlikely(rt->dst.dev == skb->dev)) {
 			ip_rt_put(rt);
 			ret = -ELOOP;
-			net_dbg_ratelimited("%s: Avoiding routing loop to %pISpfsc\n",
-					    wg->dev->name, &endpoint->addr);
+//			net_dbg_ratelimited("%s: Avoiding routing loop to %pISpfsc\n",
+//					    wg->dev->name, &endpoint->addr);
 			goto err;
 		}
 		if (cache)
@@ -146,14 +146,14 @@ static int send6(struct wg_device *wg, struct sk_buff *skb,
 						      NULL);
 		if (unlikely(IS_ERR(dst))) {
 			ret = PTR_ERR(dst);
-			net_dbg_ratelimited("%s: No route to %pISpfsc, error %d\n",
-					    wg->dev->name, &endpoint->addr, ret);
+//			net_dbg_ratelimited("%s: No route to %pISpfsc, error %d\n",
+//					    wg->dev->name, &endpoint->addr, ret);
 			goto err;
 		} else if (unlikely(dst->dev == skb->dev)) {
 			dst_release(dst);
 			ret = -ELOOP;
-			net_dbg_ratelimited("%s: Avoiding routing loop to %pISpfsc\n",
-					    wg->dev->name, &endpoint->addr);
+//			net_dbg_ratelimited("%s: Avoiding routing loop to %pISpfsc\n",
+//					    wg->dev->name, &endpoint->addr);
 			goto err;
 		}
 		if (cache)
@@ -389,7 +389,7 @@ retry:
 
 	ret = udp_sock_create(wg->creating_net, &port4, &new4);
 	if (ret < 0) {
-		pr_err("%s: Could not create IPv4 socket\n", wg->dev->name);
+//		pr_err("%s: Could not create IPv4 socket\n", wg->dev->name);
 		return ret;
 	}
 	set_sock_opts(new4);
@@ -403,8 +403,8 @@ retry:
 			udp_tunnel_sock_release(new4);
 			if (ret == -EADDRINUSE && !port && retries++ < 100)
 				goto retry;
-			pr_err("%s: Could not create IPv6 socket\n",
-			       wg->dev->name);
+//			pr_err("%s: Could not create IPv6 socket\n",
+//			       wg->dev->name);
 			return ret;
 		}
 		set_sock_opts(new6);

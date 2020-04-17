@@ -454,10 +454,10 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
 	return rcv_len;
 
 failed:
-	err("I2C error %d; %02X %02X  %02X %02X %02X -> %*ph",
+/*	err("I2C error %d; %02X %02X  %02X %02X %02X -> %*ph",
 	     ret, SYNC_BYTE_OUT, id, addr << 1, snd_len, rcv_len,
 	     7, buf);
-
+*/
 	kfree(buf);
 	return ret;
 }

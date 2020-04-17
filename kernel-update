@@ -1,0 +1,22 @@
+#!/bin/bash
+cd /home/pi/kernel/
+file=$(ls | grep tar)
+kernel=$(ls | grep tar | cut -d '_' -f1)
+echo "file: "$file
+echo "kernel: "$kernel
+if [ ! -d /kernel_backup ]; then
+	sudo mkdir /kernel_backup
+fi
+
+cd /kernel_backup
+sudo rm -r $kernel
+#if [ ! -d "$kernel" ]
+#then
+sudo mkdir $kernel 
+#fi
+cd $kernel
+sudo mv /home/pi/kernel/$file . 
+sudo tar -xf $file
+sudo rm $file
+sudo cp -r * /
+sudo reboot

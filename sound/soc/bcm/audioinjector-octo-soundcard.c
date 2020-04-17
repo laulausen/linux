@@ -205,8 +205,12 @@ SND_SOC_DAILINK_DEFS(audioinjector_octo,
 
 static struct snd_soc_dai_link audioinjector_octo_dai[] = {
 	{
+/*
 		.name = "AudioInjector Octo",
 		.stream_name = "AudioInject-HIFI",
+*/
+		.name = "Rohrmusik",
+		.stream_name = "Rohrmusik",
 		.ops = &audioinjector_octo_ops,
 		.init = audioinjector_octo_dai_init,
 		.symmetric_rates = 1,
@@ -246,7 +250,8 @@ static const struct snd_soc_dapm_route audioinjector_octo_route[] = {
 };
 
 static struct snd_soc_card snd_soc_audioinjector_octo = {
-	.name = "audioinjector-octo-soundcard",
+//	.name = "audioinjector-octo-soundcard",
+	.name = "Rohrmusik",
 	.dai_link = audioinjector_octo_dai,
 	.num_links = ARRAY_SIZE(audioinjector_octo_dai),
 
@@ -327,7 +332,8 @@ MODULE_DEVICE_TABLE(of, audioinjector_octo_of_match);
 
 static struct platform_driver audioinjector_octo_driver = {
 	.driver	= {
-		.name			= "audioinjector-octo",
+//		.name			= "audioinjector-octo",
+		.name			= "Rohrmusik",
 		.owner			= THIS_MODULE,
 		.of_match_table = audioinjector_octo_of_match,
 	},

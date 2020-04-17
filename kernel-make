@@ -1,0 +1,256 @@
+#!/bin/bash
+
+#make -j6 ARCH=arm64 CROSS_COMPILE=aarch64-linux- menuconfig
+
+#if [ "$1" = "" || "$2" = "" ]; then
+#	echo "usage: kernel-make bit (64, 32) rpi (3,4)"
+#	exit 1
+#fi 
+
+echo "please enter bit-version (32/64):"
+read bit
+echo "please enter rpi-version (3/4):"
+read rpi
+
+echo "continue with RPI $rpi $bit bit?"
+read VAR
+if [ ! "$VAR" = "y" ]; then
+        exit 0
+fi
+
+if [ "$bit" = "64" ]; then
+	kernel="kernel8_Rpi"$rpi
+	ARCH="arm64"
+	CROSS_COMPILE="aarch64-linux-"
+	if [ "$rpi" = "3" ]; then
+		config="bcmrpi3_defconfig"
+		dtb="*rpi-3*.dtb"
+	elif [ "$rpi" = "4" ]; then
+		config="bcm2711_defconfig"
+		dtb="bcm2711*.dtb"
+	else
+		echo "usage: kernel-make bit (64, 32) rpi (3,4) [menu]"
+		exit 1
+	fi
+
+elif [ "$bit" = "32" ]; then
+	ARCH="arm"
+	CROSS_COMPILE="arm-linux-gnueabihf-"
+	if [ "$rpi" = "3" ]; then
+		config="bcm2710_defconfig"
+		kernel="kernel7"
+		dtb="bcm2710*.dtb"
+	elif [ "$rpi" = "4" ]; then
+		config="bcm2711_defconfig"
+		kernel="kernel7l"
+		dtb="bcm2711*.dtb"
+	else
+                echo "usage: kernel-make bit (64, 32) rpi (3,4) [menu]"
+                exit 1
+	fi
+else
+        echo "usage: kernel-make bit (64, 32) rpi (3,4) [menu]"
+	exit 1
+fi
+TARGET_RPI="pi@192.168.178.45"
+KERNEL_ARCHIV_DIR="/home/mike/rpi-kernel/"
+LINUX_DIR="/home/mike/git/linux"
+config_file=$LINUX_DIR"/.config"
+cd $LINUX_DIR
+
+make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE $config
+
+linux=$(cat $config_file | grep "Kernel Configuration" | cut -d '/' -f2 | cut -d ' ' -f 2)
+#$(git status | grep 'Auf Branch' | cut -d' ' -f3)
+
+echo ""
+echo "Linux: $linux"
+echo ""
+BACKUP_DIR="/home/mike/git/backup_$linux"
+CUSTOM_KERNEL_FILES_DIR="/home/mike/git/custom_kernel_files"
+
+echo ""
+echo "backup original kernel files to $BACKUP_DIR"
+echo ""
+
+# START backup der originalen files
+if [ ! -d "$BACKUP_DIR" ]; then
+	mkdir $BACKUP_DIR
+	mkdir $BACKUP_DIR/drivers
+	mkdir $BACKUP_DIR/drivers/media
+	mkdir $BACKUP_DIR/drivers/media/usb
+	mkdir $BACKUP_DIR/drivers/media/usb/dvb-usb
+	mkdir $BACKUP_DIR/drivers/net
+	mkdir $BACKUP_DIR/drivers/net/wireguard
+	mkdir $BACKUP_DIR/drivers/video
+	mkdir $BACKUP_DIR/drivers/video/logo
+	mkdir $BACKUP_DIR/sound
+	mkdir $BACKUP_DIR/sound/soc
+	mkdir $BACKUP_DIR/sound/soc/bcm
+	mkdir $BACKUP_DIR/sound/soc/codecs
+fi
+
+cp $LINUX_DIR/drivers/media/usb/dvb-usb/pctv452e.c $BACKUP_DIR/drivers/media/usb/dvb-usb/pctv452e.c
+cp -r $LINUX_DIR/drivers/net/wireguard/*.c $BACKUP_DIR/drivers/net/wireguard/
+cp -r $LINUX_DIR/drivers/net/wireguard/*.h $BACKUP_DIR/drivers/net/wireguard/
+#cp $LINUX_DIR/drivers/net/wireguard/noise.c $BACKUP_DIR/drivers/net/wireguard/noise.c
+#cp $LINUX_DIR/drivers/net/wireguard/receive.c $BACKUP_DIR/drivers/net/wireguard/receive.c
+#cp $LINUX_DIR/drivers/net/wireguard/socket.c $BACKUP_DIR/drivers/net/wireguard/socket.c
+#cp $LINUX_DIR/drivers/net/wireguard/timers.c $BACKUP_DIR/drivers/net/wireguard/timers.c
+cp $LINUX_DIR/drivers/video/logo/logo_linux_clut224.ppm $BACKUP_DIR/drivers/video/logo/logo_linux_clut224.ppm
+cp $LINUX_DIR/drivers/video/logo/logo_linux_mono.pbm $BACKUP_DIR/drivers/video/logo/logo_linux_mono.pbm
+cp $LINUX_DIR/drivers/video/logo/logo_linux_vga16.ppm $BACKUP_DIR/drivers/video/logo/logo_linux_vga16.ppm
+cp $LINUX_DIR/sound/soc/bcm/audioinjector-octo-soundcard.c $BACKUP_DIR/sound/soc/bcm/audioinjector-octo-soundcard.c
+cp $LINUX_DIR/sound/soc/bcm/bcm2835-i2s.c $BACKUP_DIR/sound/soc/bcm/bcm2835-i2s.c
+cp $LINUX_DIR/sound/soc/codecs/cs42xx8.c $BACKUP_DIR/sound/soc/codecs/cs42xx8.c
+
+# ENDE backup
+
+# START aenderungen schreiben
+echo ""
+echo "copy custom kernel files"
+echo ""
+cp -r $CUSTOM_KERNEL_FILES_DIR/* $LINUX_DIR/
+
+kernel_config=$LINUX_DIR"/"$linux"_RPI"$rpi"_"$bit"bit.config"
+echo "config file: "$kernel_config
+echo "start kernel configuration?"
+read VAR
+if [ ! -f $kernel_config ]; then
+	VAR="y"
+fi
+
+if [ "$VAR" = "y" ]; then
+#	make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE $config
+	make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE menuconfig
+	cp $LINUX_DIR/.config $kernel_config
+else
+	cp $kernel_config $LINUX_DIR/.config
+fi
+
+#config_file=$LINUX_DIR/.config
+#
+#vers='"-rpi_'$rpi'-'$bit'bit"'
+#vers_old=$(cat $config_file | grep CONFIG_LOCALVERSION=)
+#
+#vers_new=CONFIG_LOCALVERSION=$vers
+#
+#sed -i 's|'$vers_old'|'$vers_new'|g' $config_file
+
+
+
+echo "Linux: "$linux
+echo "kernel: "$kernel
+echo "arch:   "$ARCH
+echo "Rpi:    "$rpi
+
+echo "start compiling (y/n)?"
+read VAR
+if [ ! "$VAR" = "y" ]; then
+	exit 0
+fi
+
+# compilieren
+make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE Image 
+make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE dtbs
+make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE modules 
+
+# START kernel-version extrahieren
+out=$(sudo make -j6 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE modules_install | grep DEPMOD | tail -n1 | cut -d ' ' -f5)
+rc=$(echo $out | cut -d 'r' -f2 | cut -d '-' -f1)
+vers=$(echo $out | cut -d '-' -f1) 
+
+if ! [ "$rc" = "$vers" ]; then
+        rc="-r"$rc
+else
+        rc=""
+fi
+
+#clear
+
+modules=$vers$rc
+echo "kernel version: $linux"
+echo ""
+# ENDE kernel-version extrahieren
+
+# originale wiederherstellen
+echo ""
+echo "restore original kernel files"
+echo ""
+cp -r $BACKUP_DIR/* $LINUX_DIR/
+
+# ordner fuer kernel erstellen
+KERNEL_DIR="/home/mike/rpi-kernel/$linux"
+echo ""
+echo "compressing kernel to $KERNEL_DIR"
+echo ""
+#sudo rm -r /home/mike/§linux
+if [ ! -d "$KERNEL_DIR" ]; then
+	mkdir $KERNEL_DIR
+	mkdir $KERNEL_DIR/boot
+	mkdir $KERNEL_DIR/boot/overlays
+	mkdir $KERNEL_DIR/lib
+	mkdir $KERNEL_DIR/lib/modules
+fi
+
+# module kopieren und loeschen
+sudo cp -r /lib/modules/$out $KERNEL_DIR/lib/modules/
+sudo rm -r /lib/modules/$out
+
+# kernel kopieren
+cp $LINUX_DIR/arch/$ARCH/boot/Image $KERNEL_DIR/boot/$kernel.img
+
+# overlays kopieren
+cp $LINUX_DIR/arch/$ARCH/boot/dts/overlays/*.dtbo $KERNEL_DIR/boot/overlays/
+cp $LINUX_DIR/arch/$ARCH/boot/dts/overlays/README $KERNEL_DIR/boot/overlays/
+cp $LINUX_DIR/arch/$ARCH/boot/dts/broadcom/$dtb $KERNEL_DIR/boot/
+
+# kernel packen
+cd $KERNEL_DIR
+file=$linux"_.tar"
+rm $file
+tar -cf $file *
+
+# vpn abschalten
+#sudo wg-quick down wg0
+
+# kernel archivieren
+echo ""
+echo "archiviere $file to $KERNEL_ARCHIV_DIR"
+echo ""
+#cp $file $KERNEL_ARCHIV_DIR/
+cp $kernel_config $KERNEL_DIR/
+#cp -r $KERNEL_DIR $KERNEL_ARCHIV_DIR/
+#rm $KERNEL_ARCHIV_DIR/$file
+# kernel an pi schicken
+echo ""
+echo "installing kernel to $TARGET_RPI (y/n/o ther Pi)?"
+read VAR
+if [ "$VAR" = "o" ]; then
+	echo "IP:"
+	read TARGET_RPI
+	echo "installing kernel to $TARGET_RPI (y/n)?"
+	if [ ! "$VAR" = "y" ]; then
+		exit 1
+	fi
+elif [ ! "$VAR" = "y" ]; then
+	exit 1
+fi
+echo "mkdir /home/pi/kernel" | ssh $TARGET_RPI
+scp /home/mike/git/kernel-update $TARGET_RPI:kernel/
+scp $file $TARGET_RPI:kernel/
+
+# kernel auf pi archivieren und installieren
+echo "/home/pi/kernel/kernel-update &" | ssh $TARGET_RPI
+
+#sudo rm -r $KERNEL_DIR
+# vpn wieder starten
+#sudo wg-quick up wg0
+
+# alle rpi-module von ubuntu loeschen
+#sudo su
+#cd /lib/modules/
+#ls /lib/modules/ | grep + > module
+#xargs -a module -d'\n' rm -r
+#rm module
+

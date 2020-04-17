@@ -203,10 +203,10 @@ static void bcm2835_i2s_clear_fifos(struct bcm2835_i2s_dev *dev,
 		if ((csreg & BCM2835_I2S_SYNC) != syncval)
 			break;
 	}
-
+/*
 	if (!timeout)
 		dev_err(dev->dev, "I2S SYNC error!\n");
-
+*/
 	/* Stop clock if it was not running before */
 	if (!clk_was_prepared)
 		bcm2835_i2s_stop_clock(dev);

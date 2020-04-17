@@ -27,9 +27,9 @@ static void wg_packet_send_handshake_initiation(struct wg_peer *peer)
 		return; /* This function is rate limited. */
 
 	atomic64_set(&peer->last_sent_handshake, ktime_get_coarse_boottime_ns());
-	net_dbg_ratelimited("%s: Sending handshake initiation to peer %llu (%pISpfsc)\n",
-			    peer->device->dev->name, peer->internal_id,
-			    &peer->endpoint.addr);
+//	net_dbg_ratelimited("%s: Sending handshake initiation to peer %llu (%pISpfsc)\n",
+//			    peer->device->dev->name, peer->internal_id,
+//			    &peer->endpoint.addr);
 
 	if (wg_noise_handshake_create_initiation(&packet, &peer->handshake)) {
 		wg_cookie_add_mac_to_packet(&packet, sizeof(packet), peer);
@@ -87,9 +87,9 @@ void wg_packet_send_handshake_response(struct wg_peer *peer)
 	struct message_handshake_response packet;
 
 	atomic64_set(&peer->last_sent_handshake, ktime_get_coarse_boottime_ns());
-	net_dbg_ratelimited("%s: Sending handshake response to peer %llu (%pISpfsc)\n",
-			    peer->device->dev->name, peer->internal_id,
-			    &peer->endpoint.addr);
+//	net_dbg_ratelimited("%s: Sending handshake response to peer %llu (%pISpfsc)\n",
+//			    peer->device->dev->name, peer->internal_id,
+//			    &peer->endpoint.addr);
 
 	if (wg_noise_handshake_create_response(&packet, &peer->handshake)) {
 		wg_cookie_add_mac_to_packet(&packet, sizeof(packet), peer);
@@ -113,8 +113,8 @@ void wg_packet_send_handshake_cookie(struct wg_device *wg,
 {
 	struct message_handshake_cookie packet;
 
-	net_dbg_skb_ratelimited("%s: Sending cookie response for denied handshake message for %pISpfsc\n",
-				wg->dev->name, initiating_skb);
+//	net_dbg_skb_ratelimited("%s: Sending cookie response for denied handshake message for %pISpfsc\n",
+//				wg->dev->name, initiating_skb);
 	wg_cookie_message_create(&packet, initiating_skb, sender_index,
 				 &wg->cookie_checker);
 	wg_socket_send_buffer_as_reply_to_skb(wg, initiating_skb, &packet,
@@ -229,9 +229,9 @@ void wg_packet_send_keepalive(struct wg_peer *peer)
 		skb->dev = peer->device->dev;
 		PACKET_CB(skb)->mtu = skb->dev->mtu;
 		skb_queue_tail(&peer->staged_packet_queue, skb);
-		net_dbg_ratelimited("%s: Sending keepalive packet to peer %llu (%pISpfsc)\n",
-				    peer->device->dev->name, peer->internal_id,
-				    &peer->endpoint.addr);
+//		net_dbg_ratelimited("%s: Sending keepalive packet to peer %llu (%pISpfsc)\n",
+//				    peer->device->dev->name, peer->internal_id,
+//				    &peer->endpoint.addr);
 	}
 
 	wg_packet_send_staged_packets(peer);

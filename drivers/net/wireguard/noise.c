@@ -121,10 +121,10 @@ static void keypair_free_kref(struct kref *kref)
 	struct noise_keypair *keypair =
 		container_of(kref, struct noise_keypair, refcount);
 
-	net_dbg_ratelimited("%s: Keypair %llu destroyed for peer %llu\n",
-			    keypair->entry.peer->device->dev->name,
-			    keypair->internal_id,
-			    keypair->entry.peer->internal_id);
+//	net_dbg_ratelimited("%s: Keypair %llu destroyed for peer %llu\n",
+//			    keypair->entry.peer->device->dev->name,
+//			    keypair->internal_id,
+//			    keypair->entry.peer->internal_id);
 	wg_index_hashtable_remove(keypair->entry.peer->device->index_hashtable,
 				  &keypair->entry);
 	call_rcu(&keypair->rcu, keypair_free_rcu);
@@ -817,10 +817,10 @@ bool wg_noise_handshake_begin_session(struct noise_handshake *handshake,
 	if (likely(!READ_ONCE(container_of(handshake, struct wg_peer,
 					   handshake)->is_dead))) {
 		add_new_keypair(keypairs, new_keypair);
-		net_dbg_ratelimited("%s: Keypair %llu created for peer %llu\n",
-				    handshake->entry.peer->device->dev->name,
-				    new_keypair->internal_id,
-				    handshake->entry.peer->internal_id);
+//		net_dbg_ratelimited("%s: Keypair %llu created for peer %llu\n",
+//				    handshake->entry.peer->device->dev->name,
+//				    new_keypair->internal_id,
+//				    handshake->entry.peer->internal_id);
 		ret = wg_index_hashtable_replace(
 			handshake->entry.peer->device->index_hashtable,
 			&handshake->entry, &new_keypair->entry);

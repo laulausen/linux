@@ -65,7 +65,7 @@ struct wg_peer *wg_peer_create(struct wg_device *wg,
 	INIT_LIST_HEAD(&peer->allowedips_list);
 	wg_pubkey_hashtable_add(wg->peer_hashtable, peer);
 	++wg->num_peers;
-	pr_debug("%s: Peer %llu created\n", wg->dev->name, peer->internal_id);
+//	pr_debug("%s: Peer %llu created\n", wg->dev->name, peer->internal_id);
 	return peer;
 
 err_3:

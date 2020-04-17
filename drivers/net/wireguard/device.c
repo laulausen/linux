@@ -124,27 +124,27 @@ static netdev_tx_t wg_xmit(struct sk_buff *skb, struct net_device *dev)
 
 	if (unlikely(!wg_check_packet_protocol(skb))) {
 		ret = -EPROTONOSUPPORT;
-		net_dbg_ratelimited("%s: Invalid IP packet\n", dev->name);
+//		net_dbg_ratelimited("%s: Invalid IP packet\n", dev->name);
 		goto err;
 	}
 
 	peer = wg_allowedips_lookup_dst(&wg->peer_allowedips, skb);
 	if (unlikely(!peer)) {
 		ret = -ENOKEY;
-		if (skb->protocol == htons(ETH_P_IP))
-			net_dbg_ratelimited("%s: No peer has allowed IPs matching %pI4\n",
-					    dev->name, &ip_hdr(skb)->daddr);
-		else if (skb->protocol == htons(ETH_P_IPV6))
-			net_dbg_ratelimited("%s: No peer has allowed IPs matching %pI6\n",
-					    dev->name, &ipv6_hdr(skb)->daddr);
+//		if (skb->protocol == htons(ETH_P_IP))
+//			net_dbg_ratelimited("%s: No peer has allowed IPs matching %pI4\n",
+//					    dev->name, &ip_hdr(skb)->daddr);
+//		else if (skb->protocol == htons(ETH_P_IPV6))
+//			net_dbg_ratelimited("%s: No peer has allowed IPs matching %pI6\n",
+//					    dev->name, &ipv6_hdr(skb)->daddr);
 		goto err;
 	}
 
 	family = READ_ONCE(peer->endpoint.addr.sa_family);
 	if (unlikely(family != AF_INET && family != AF_INET6)) {
 		ret = -EDESTADDRREQ;
-		net_dbg_ratelimited("%s: No valid endpoint has been configured or discovered for peer %llu\n",
-				    dev->name, peer->internal_id);
+//		net_dbg_ratelimited("%s: No valid endpoint has been configured or discovered for peer %llu\n",
+//				    dev->name, peer->internal_id);
 		goto err_peer;
 	}
 
@@ -246,7 +246,7 @@ static void wg_destruct(struct net_device *dev)
 	kvfree(wg->peer_hashtable);
 	mutex_unlock(&wg->device_update_lock);
 
-	pr_debug("%s: Interface deleted\n", dev->name);
+//	pr_debug("%s: Interface deleted\n", dev->name);
 	free_netdev(dev);
 }
 
@@ -360,7 +360,7 @@ static int wg_newlink(struct net *src_net, struct net_device *dev,
 	 */
 	dev->priv_destructor = wg_destruct;
 
-	pr_debug("%s: Interface created\n", dev->name);
+//	pr_debug("%s: Interface created\n", dev->name);
 	return ret;
 
 err_uninit_ratelimiter:

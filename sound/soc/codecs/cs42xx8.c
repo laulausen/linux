@@ -71,48 +71,48 @@ static const struct soc_enum adc_szc_enum =
 	SOC_ENUM_SINGLE(CS42XX8_TXCTL, 0, 4, cs42xx8_szc);
 
 static const struct snd_kcontrol_new cs42xx8_snd_controls[] = {
-	SOC_DOUBLE_R_TLV("DAC1 Playback Volume", CS42XX8_VOLAOUT1,
+	SOC_DOUBLE_R_TLV("1+2 FRONT Playback Volume", CS42XX8_VOLAOUT1,
 			 CS42XX8_VOLAOUT2, 0, 0xff, 1, dac_tlv),
-	SOC_DOUBLE_R_TLV("DAC2 Playback Volume", CS42XX8_VOLAOUT3,
+	SOC_DOUBLE_R_TLV("3+4 SIDE Playback Volume", CS42XX8_VOLAOUT3,
 			 CS42XX8_VOLAOUT4, 0, 0xff, 1, dac_tlv),
-	SOC_DOUBLE_R_TLV("DAC3 Playback Volume", CS42XX8_VOLAOUT5,
+	SOC_DOUBLE_R_TLV("5+6 CenSub Playback Volume", CS42XX8_VOLAOUT5,
 			 CS42XX8_VOLAOUT6, 0, 0xff, 1, dac_tlv),
-	SOC_DOUBLE_R_TLV("DAC4 Playback Volume", CS42XX8_VOLAOUT7,
+	SOC_DOUBLE_R_TLV("7+8 REAR Playback Volume", CS42XX8_VOLAOUT7,
 			 CS42XX8_VOLAOUT8, 0, 0xff, 1, dac_tlv),
-	SOC_DOUBLE_R_S_TLV("ADC1 Capture Volume", CS42XX8_VOLAIN1,
+	SOC_DOUBLE_R_S_TLV("xIN 1+2 Capture Volume", CS42XX8_VOLAIN1,
 			   CS42XX8_VOLAIN2, 0, -0x80, 0x30, 7, 0, adc_tlv),
-	SOC_DOUBLE_R_S_TLV("ADC2 Capture Volume", CS42XX8_VOLAIN3,
+	SOC_DOUBLE_R_S_TLV("xIN 3+4 Capture Volume", CS42XX8_VOLAIN3,
 			   CS42XX8_VOLAIN4, 0, -0x80, 0x30, 7, 0, adc_tlv),
-	SOC_DOUBLE("DAC1 Invert Switch", CS42XX8_DACINV, 0, 1, 1, 0),
-	SOC_DOUBLE("DAC2 Invert Switch", CS42XX8_DACINV, 2, 3, 1, 0),
-	SOC_DOUBLE("DAC3 Invert Switch", CS42XX8_DACINV, 4, 5, 1, 0),
-	SOC_DOUBLE("DAC4 Invert Switch", CS42XX8_DACINV, 6, 7, 1, 0),
-	SOC_DOUBLE("ADC1 Invert Switch", CS42XX8_ADCINV, 0, 1, 1, 0),
-	SOC_DOUBLE("ADC2 Invert Switch", CS42XX8_ADCINV, 2, 3, 1, 0),
-	SOC_SINGLE("ADC High-Pass Filter Switch", CS42XX8_ADCCTL, 7, 1, 1),
-	SOC_SINGLE("DAC De-emphasis Switch", CS42XX8_ADCCTL, 5, 1, 0),
-	SOC_ENUM("ADC1 Single Ended Mode Switch", adc1_single_enum),
-	SOC_ENUM("ADC2 Single Ended Mode Switch", adc2_single_enum),
-	SOC_SINGLE("DAC Single Volume Control Switch", CS42XX8_TXCTL, 7, 1, 0),
-	SOC_ENUM("DAC Soft Ramp & Zero Cross Control Switch", dac_szc_enum),
-	SOC_SINGLE("DAC Auto Mute Switch", CS42XX8_TXCTL, 4, 1, 0),
-	SOC_SINGLE("Mute ADC Serial Port Switch", CS42XX8_TXCTL, 3, 1, 0),
-	SOC_SINGLE("ADC Single Volume Control Switch", CS42XX8_TXCTL, 2, 1, 0),
-	SOC_ENUM("ADC Soft Ramp & Zero Cross Control Switch", adc_szc_enum),
+	SOC_DOUBLE("1+2 FRONT Invert Switch", CS42XX8_DACINV, 0, 1, 1, 0),
+	SOC_DOUBLE("3+4 SIDE Invert Switch", CS42XX8_DACINV, 2, 3, 1, 0),
+	SOC_DOUBLE("5+6 CenSub Invert Switch", CS42XX8_DACINV, 4, 5, 1, 0),
+	SOC_DOUBLE("7+8 REAR Invert Switch", CS42XX8_DACINV, 6, 7, 1, 0),
+	SOC_DOUBLE("xIN 1+2 Invert Switch", CS42XX8_ADCINV, 0, 1, 1, 0),
+	SOC_DOUBLE("xIN 3+4 Invert Switch", CS42XX8_ADCINV, 2, 3, 1, 0),
+	SOC_SINGLE("xIN High-Pass Filter Switch", CS42XX8_ADCCTL, 7, 1, 1),
+	SOC_SINGLE("OUT De-emphasis Switch", CS42XX8_ADCCTL, 5, 1, 0),
+	SOC_ENUM("xIN 1+2 Single Ended Mode Switch", adc1_single_enum),
+	SOC_ENUM("xIN 3+4 Single Ended Mode Switch", adc2_single_enum),
+	SOC_SINGLE("OUT Single Volume Control Switch", CS42XX8_TXCTL, 7, 1, 0),
+	SOC_ENUM("OUT Soft Ramp & Zero Cross Control Switch", dac_szc_enum),
+	SOC_SINGLE("OUT Auto Mute Switch", CS42XX8_TXCTL, 4, 1, 0),
+	SOC_SINGLE("Mute xIN Serial Port Switch", CS42XX8_TXCTL, 3, 1, 0),
+	SOC_SINGLE("xIN Single Volume Control Switch", CS42XX8_TXCTL, 2, 1, 0),
+	SOC_ENUM("xIN Soft Ramp & Zero Cross Control Switch", adc_szc_enum),
 };
 
 static const struct snd_kcontrol_new cs42xx8_adc3_snd_controls[] = {
-	SOC_DOUBLE_R_S_TLV("ADC3 Capture Volume", CS42XX8_VOLAIN5,
+	SOC_DOUBLE_R_S_TLV("xIN 5+6 Capture Volume", CS42XX8_VOLAIN5,
 			   CS42XX8_VOLAIN6, 0, -0x80, 0x30, 7, 0, adc_tlv),
-	SOC_DOUBLE("ADC3 Invert Switch", CS42XX8_ADCINV, 4, 5, 1, 0),
-	SOC_ENUM("ADC3 Single Ended Mode Switch", adc3_single_enum),
+	SOC_DOUBLE("xIN 5+6 Invert Switch", CS42XX8_ADCINV, 4, 5, 1, 0),
+	SOC_ENUM("xIN 5+6 Single Ended Mode Switch", adc3_single_enum),
 };
 
 static const struct snd_soc_dapm_widget cs42xx8_dapm_widgets[] = {
-	SND_SOC_DAPM_DAC("DAC1", "Playback", CS42XX8_PWRCTL, 1, 1),
-	SND_SOC_DAPM_DAC("DAC2", "Playback", CS42XX8_PWRCTL, 2, 1),
-	SND_SOC_DAPM_DAC("DAC3", "Playback", CS42XX8_PWRCTL, 3, 1),
-	SND_SOC_DAPM_DAC("DAC4", "Playback", CS42XX8_PWRCTL, 4, 1),
+	SND_SOC_DAPM_DAC("1+2 FRONT", "Playback", CS42XX8_PWRCTL, 1, 1),
+	SND_SOC_DAPM_DAC("3+4 SIDE", "Playback", CS42XX8_PWRCTL, 2, 1),
+	SND_SOC_DAPM_DAC("5+6 CenSub", "Playback", CS42XX8_PWRCTL, 3, 1),
+	SND_SOC_DAPM_DAC("7+8 REAR", "Playback", CS42XX8_PWRCTL, 4, 1),
 
 	SND_SOC_DAPM_OUTPUT("AOUT1L"),
 	SND_SOC_DAPM_OUTPUT("AOUT1R"),
@@ -123,8 +123,8 @@ static const struct snd_soc_dapm_widget cs42xx8_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("AOUT4L"),
 	SND_SOC_DAPM_OUTPUT("AOUT4R"),
 
-	SND_SOC_DAPM_ADC("ADC1", "Capture", CS42XX8_PWRCTL, 5, 1),
-	SND_SOC_DAPM_ADC("ADC2", "Capture", CS42XX8_PWRCTL, 6, 1),
+	SND_SOC_DAPM_ADC("xIN 1+2", "Capture", CS42XX8_PWRCTL, 5, 1),
+	SND_SOC_DAPM_ADC("xIN 3+4", "Capture", CS42XX8_PWRCTL, 6, 1),
 
 	SND_SOC_DAPM_INPUT("AIN1L"),
 	SND_SOC_DAPM_INPUT("AIN1R"),
@@ -135,7 +135,7 @@ static const struct snd_soc_dapm_widget cs42xx8_dapm_widgets[] = {
 };
 
 static const struct snd_soc_dapm_widget cs42xx8_adc3_dapm_widgets[] = {
-	SND_SOC_DAPM_ADC("ADC3", "Capture", CS42XX8_PWRCTL, 7, 1),
+	SND_SOC_DAPM_ADC("xIN 5+6", "Capture", CS42XX8_PWRCTL, 7, 1),
 
 	SND_SOC_DAPM_INPUT("AIN3L"),
 	SND_SOC_DAPM_INPUT("AIN3R"),
@@ -143,37 +143,37 @@ static const struct snd_soc_dapm_widget cs42xx8_adc3_dapm_widgets[] = {
 
 static const struct snd_soc_dapm_route cs42xx8_dapm_routes[] = {
 	/* Playback */
-	{ "AOUT1L", NULL, "DAC1" },
-	{ "AOUT1R", NULL, "DAC1" },
-	{ "DAC1", NULL, "PWR" },
+	{ "AOUT1L", NULL, "1+2 FRONT" },
+	{ "AOUT1R", NULL, "1+2 FRONT" },
+	{ "1+2 FRONT", NULL, "PWR" },
 
-	{ "AOUT2L", NULL, "DAC2" },
-	{ "AOUT2R", NULL, "DAC2" },
-	{ "DAC2", NULL, "PWR" },
+	{ "AOUT2L", NULL, "3+4 SIDE" },
+	{ "AOUT2R", NULL, "3+4 SIDE" },
+	{ "3+4 SIDE", NULL, "PWR" },
 
-	{ "AOUT3L", NULL, "DAC3" },
-	{ "AOUT3R", NULL, "DAC3" },
-	{ "DAC3", NULL, "PWR" },
+	{ "AOUT3L", NULL, "5+6 CenSub" },
+	{ "AOUT3R", NULL, "5+6 CenSub" },
+	{ "5+6 CenSub", NULL, "PWR" },
 
-	{ "AOUT4L", NULL, "DAC4" },
-	{ "AOUT4R", NULL, "DAC4" },
-	{ "DAC4", NULL, "PWR" },
+	{ "AOUT4L", NULL, "7+8 REAR" },
+	{ "AOUT4R", NULL, "7+8 REAR" },
+	{ "7+8 REAR", NULL, "PWR" },
 
 	/* Capture */
-	{ "ADC1", NULL, "AIN1L" },
-	{ "ADC1", NULL, "AIN1R" },
-	{ "ADC1", NULL, "PWR" },
+	{ "xIN 1+2", NULL, "AIN1L" },
+	{ "xIN 1+2", NULL, "AIN1R" },
+	{ "xIN 1+2", NULL, "PWR" },
 
-	{ "ADC2", NULL, "AIN2L" },
-	{ "ADC2", NULL, "AIN2R" },
-	{ "ADC2", NULL, "PWR" },
+	{ "xIN 3+4", NULL, "AIN2L" },
+	{ "xIN 3+4", NULL, "AIN2R" },
+	{ "xIN 3+4", NULL, "PWR" },
 };
 
 static const struct snd_soc_dapm_route cs42xx8_adc3_dapm_routes[] = {
 	/* Capture */
-	{ "ADC3", NULL, "AIN3L" },
-	{ "ADC3", NULL, "AIN3R" },
-	{ "ADC3", NULL, "PWR" },
+	{ "xIN 5+6", NULL, "AIN3L" },
+	{ "xIN 5+6", NULL, "AIN3R" },
+	{ "xIN 5+6", NULL, "PWR" },
 };
 
 struct cs42xx8_ratios {
